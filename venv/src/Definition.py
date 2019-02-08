@@ -13,5 +13,5 @@ class AtributeType(Enum):
         elif "STRUCTURAL" == name.upper():
             return AtributeType.STRUCTURAL
         else:
-            print
+            print(name)
             return AttributeType.UNKOWN_TYPE
