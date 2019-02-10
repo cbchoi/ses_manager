@@ -4,12 +4,15 @@ class Attribute(object):
     def __init__(self, type):
         self.atribute_type = AttributeType.resolve_type_from_str(type)
 
+    def get_type(self):
+        return self.atribute_type
+
     def __str__(self):
         return "\"type\":" + self.attribute_type + ","
 
 class ModelAttribute(Attribute):
     def __init__(self, type):
-        super(Attribute, self).__init__(self, type)
+        super(ModelAttribute, self).__init__( type)
         # Input Ports Declaration
         self.input_ports = []
         # Output Ports Declaration
@@ -22,12 +25,12 @@ class ModelAttribute(Attribute):
 
     def insert_output_port(self, port):
         self.output_ports.append(port)
-    def retrive_put_ports(self):
+    def retrive_output_ports(self):
         return self.output_ports
 
 class ModelBehaviorAttribute(ModelAttribute):
     def __init__(self):
-        super(ModelAttribute, self).__init__("BEHAVIOR")
+        super(ModelBehaviorAttribute, self).__init__("BEHAVIOR")
         self.states = {}
         self.external_transition_map_tuple = {}
         self.external_transition_map_state = {}
@@ -79,9 +82,9 @@ class ModelBehaviorAttribute(ModelAttribute):
     def find_internal_transition(self, pre_state):
         return pre_state in self.internal_transition_map_state
 
-class ModelStructrualAttribute(ModelAttribute):
+class ModelStructuralAttribute(ModelAttribute):
     def __init__(self):
-        super(ModelAttribute, self).__init__("STRUCTURAL")
+        super(ModelStructuralAttribute, self).__init__("STRUCTURAL")
         self.entity_list = []
         self.external_input_map = {}
         self.internal_coupling_map_tuple = {}
@@ -91,11 +94,9 @@ class ModelStructrualAttribute(ModelAttribute):
 
     def insert_entity(self, entity):
         # TODO: Exception Handling
-        # TA < 0
-        # Duplicated State
         self.entity_list.append(entity)
 
-    def retrive_entity(self):
+    def retrive_entities(self):
         return self.entity_list
 
 #    def find_entity(self, entity):
@@ -116,9 +117,18 @@ class ModelStructrualAttribute(ModelAttribute):
             else:
                 self.external_output_map[dst_port] = [src]
         else:
-            if src in self.internal_coupling_map:
+            if src in self.internal_coupling_map_tuple:
                 self.internal_coupling_map_tuple[src].append(dst)
                 self.internal_coupling_map_entity[src_entity].append((src_port, dst))
             else:
                 self.internal_coupling_map_tuple[src] = [dst]
                 self.internal_coupling_map_entity[src_entity]=[(src_port, dst)]
+
+    def retrive_external_input_coupling(self):
+        return self.external_input_map
+
+    def retrive_external_output_coupling(self):
+        return self.external_output_map
+
+    def retrive_internal_coupling(self):
+        return self.internal_coupling_map_entity
