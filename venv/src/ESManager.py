@@ -32,9 +32,13 @@ class EntityManager(object):
         entity_data = OrderedDict()
         entity_data["name"] = self.root_entity.get_name()
         entity_data["attributes"] = self.root_entity.attribute_to_list()
-
         print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
-        pass
+
+    def export_system_entity_structure_recursively(self, path="."):
+        entity_data = OrderedDict()
+        entity_data["name"] = self.root_entity.get_name()
+        entity_data["attributes"] = self.root_entity.attribute_to_list()
+        print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
 
     def import_system_entity_structure(self, path="."):
         pass
