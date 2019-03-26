@@ -3,6 +3,7 @@ from Entity import *
 from Attribute import *
 from Definition import *
 import json
+import os
 from collections import OrderedDict
 
 class EntityManager(object):
@@ -16,29 +17,49 @@ class EntityManager(object):
     def retrive_entity_db_path(self):
         return self.entity_path
 
-    def create_empty_entity_structure(self, type):
+    def create_empty_entity_structure(self, type, name=""):
         enum = AttributeType.resolve_type_from_str(type)
         if enum == AttributeType.BEHAVIOR:
-            return BehavioralEntity("")
+            return BehavioralEntity(name)
         elif enum == AttributeType.STRUCTURAL:
-            return StructuralEntity("")
+            return StructuralEntity(name)
         else:
-            return Entity("")
+            return None
 
     def create_system(self, entity:Entity):
         self.root_entity = entity
 
-    def export_system_entity_structure(self, path="."):
+    def export_system_entity_structure(self, path=".", name="ses.json"):
         entity_data = OrderedDict()
         entity_data["name"] = self.root_entity.get_name()
         entity_data["attributes"] = self.root_entity.attribute_to_list()
-        print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
+
+        f = open(os.path.join(path, name), "w")
+        f.write(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
+        f.close()
+        #print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
 
     def export_system_entity_structure_recursively(self, path="."):
         entity_data = OrderedDict()
         entity_data["name"] = self.root_entity.get_name()
         entity_data["attributes"] = self.root_entity.attribute_to_list()
-        print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
+        #print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
 
-    def import_system_entity_structure(self, path="."):
+    def import_system_entity_structure(self, path=".", name="ses.json"):
+
+        json_data = open(os.path.join(path, name)).read()
+        data = json.loads(json_data)
+        name = data["name"]
+        attributes = data["attributes"]
+        entity_type = attributes[0]
+        
+        self.root_entity = self.create_empty_entity_structure(name, entity_type)
+        print(self.root_entity)
+        #print(data)
+        #entity_data = OrderedDict()
+        #entity_data["name"] = self.root_entity.get_name()
+        #entity_data["attributes"] = self.root_entity.attribute_to_list()
+
+        #print(json.dumps(entity_data, ensure_ascii=False, indent="\t"))
+
         pass
